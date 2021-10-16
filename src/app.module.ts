@@ -7,7 +7,7 @@ import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
-import * as ormconfig from './ormconfig';
+import * as ormconfig from './config/ormconfig';
 
 @Module({
   imports: [
