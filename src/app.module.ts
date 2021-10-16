@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentryModule } from '@ntegral/nestjs-sentry';
 import { LogLevel } from '@sentry/types';
+import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
@@ -11,6 +13,7 @@ import { ConfigFields } from './config-types';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    TypeOrmModule.forRoot(),
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
@@ -27,4 +30,6 @@ import { ConfigFields } from './config-types';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly connection: Connection) {}
+}
