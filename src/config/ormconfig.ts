@@ -1,9 +1,7 @@
 import * as dotEnv from 'dotenv';
 dotEnv.config();
-import { ConnectionOptions } from 'typeorm';
 
-console.log(process.env.DB_HOST);
-const config: ConnectionOptions = {
+const config = {
   type: 'postgres',
   host: `${process.env.DB_HOST}`,
   port: Number(process.env.DB_PORT),
@@ -14,9 +12,9 @@ const config: ConnectionOptions = {
   synchronize: false,
   migrationsRun: true,
   logging: true,
-  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+  migrations: ['src/migrations/**/*{.ts,.js}'],
   cli: {
-    migrationsDir: 'src/migrations',
+    migrationsDir: '/src/migrations',
   },
 };
 
