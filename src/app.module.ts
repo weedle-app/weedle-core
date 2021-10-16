@@ -7,13 +7,14 @@ import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
+import * as ormconfig from './ormconfig';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot(ormconfig),
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
