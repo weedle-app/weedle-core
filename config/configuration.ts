@@ -5,11 +5,11 @@ export default () => ({
   },
   service: {
     name: 'Weedle App',
-    port: 4003,
-    host: `${process.env.BASE_URL || 'http//localhost'}:${
+    port: process.env.PORT || 4003,
+    host: `${process.env.BASE_URL || 'http://localhost'}:${
       process.env.PORT || 4003
     }`,
-    url: `${process.env.BASE_URL || 'http//localhost'}:${
+    url: `${process.env.BASE_URL || 'http://localhost'}:${
       process.env.PORT || 4003
     }`,
     version: 1,

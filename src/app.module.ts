@@ -10,7 +10,7 @@ import { MarketingModule } from './rest/api/marketing/marketing.module';
 import { appConfigService } from './_core/services/app-config.service';
 import configuration from '../config/configuration';
 import { AppService } from './app.service';
-import { AppController } from './app.controller';
+// import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -20,23 +20,24 @@ import { AppController } from './app.controller';
       load: [configuration],
     }),
     TypeOrmModule.forRoot(appConfigService.getTypeOrmConfig()),
-    SentryModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (cfg: ConfigService) => ({
-        dsn: cfg.get(ConfigFields.SENTRY_DSN),
-        debug: false,
-        environment: cfg.get(ConfigFields.NODE_ENV),
-        tracesSampleRate: 1.0,
-        // release: 'some_release', | null, // must create a release in sentry.io dashboard
-        logLevel: LogLevel.Error, //based on sentry.io loglevel //
-      }),
-      inject: [ConfigService],
-    }),
+    // SentryModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: async (cfg: ConfigService) => ({
+    //     dsn: cfg.get(ConfigFields.SENTRY_DSN),
+    //     debug: false,
+    //     environment: cfg.get(ConfigFields.NODE_ENV),
+    //     tracesSampleRate: 1.0,
+    //     // release: 'some_release', | null, // must create a release in sentry.io dashboard
+    //     logLevel: LogLevel.Error, //based on sentry.io loglevel //
+    //   }),
+    //   inject: [ConfigService],
+    // }),
     MarketingModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, MailHelperService],
+  controllers: [],
+  providers: [MailHelperService],
+  // providers: [],
 })
 export class AppModule {
-  constructor(private readonly connection: Connection) {}
+  // constructor(private readonly connection: Connection) {}
 }
