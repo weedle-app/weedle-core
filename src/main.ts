@@ -7,7 +7,6 @@ import { ResponseException, ValidationPipe } from './_core';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  console.log('port-here');
   app.setGlobalPrefix('api/v1');
   app.useGlobalFilters(new ResponseException());
   app.useGlobalPipes(new ValidationPipe());

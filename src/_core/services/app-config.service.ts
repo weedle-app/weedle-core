@@ -32,7 +32,7 @@ export class AppConfigService {
   }
 
   public getTypeOrmConfig(): TypeOrmModuleOptions {
-    return {
+    let ormConfig: TypeOrmModuleOptions = {
       type: 'postgres',
       host: `${process.env.DB_HOST}`,
       port: Number(process.env.DB_PORT),
@@ -44,14 +44,21 @@ export class AppConfigService {
       synchronize: !this.isProduction(),
       migrationsRun: true,
       logging: true,
-      ssl: {
-        ca: Buffer.from(process.env.SSL_CERT, 'base64').toString('ascii'),
-      },
       migrations: [join(__dirname, '/migrations/**/*{.ts,.js}')],
       cli: {
         migrationsDir: '/src/migrations',
       },
     };
+
+    if (process.env.SSL_CERT) {
+      ormConfig = {
+        ...ormConfig,
+        ssl: {
+          ca: Buffer.from(process.env.SSL_CERT, 'base64').toString('ascii'),
+        },
+      };
+    }
+    return ormConfig;
   }
 }
 const appConfigService = new AppConfigService(process.env).ensureValues([
