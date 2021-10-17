@@ -1,19 +1,20 @@
-import { ConnectionOptions } from 'typeorm';
+import * as dotEnv from 'dotenv';
+dotEnv.config();
 
-const config: ConnectionOptions = {
+const config = {
   type: 'postgres',
   host: `${process.env.DB_HOST}`,
-  port: 5432,
   username: `${process.env.DB_USERNAME}`,
+  port: Number(process.env.DB_PORT),
   password: `${process.env.DB_PASSWORD}`,
   database: `${process.env.DB_NAME}`,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: false,
   migrationsRun: true,
   logging: true,
-  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+  migrations: ['src/migrations/**/*{.ts,.js}'],
   cli: {
-    migrationsDir: 'src/migrations',
+    migrationsDir: '/src/migrations',
   },
 };
 
