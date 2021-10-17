@@ -35,6 +35,6 @@ export class PreLaunchLeads1634352819342 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    queryRunner.query(`DROP TABLE article`);
+    queryRunner.query(`DROP TABLE pre_launch_leads`);
   }
 }

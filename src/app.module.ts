@@ -9,8 +9,6 @@ import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
 import { MailHelperService } from './services/mail-service/mail-helper.service';
 import { MarketingModule } from './services/marketing/marketing.module';
-import { MarketingController } from './services/marketing/marketing.controller';
-import { MarketingService } from './services/marketing/marketing.service';
 import * as ormconfig from './config/ormconfig';
 
 @Module({
