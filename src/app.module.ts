@@ -4,19 +4,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentryModule } from '@ntegral/nestjs-sentry';
 import { LogLevel } from '@sentry/types';
 import { Connection } from 'typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
-import { MailHelperService } from './services/mail-service/mail-helper.service';
-import { MarketingModule } from './services/marketing/marketing.module';
-import * as ormconfig from './config/ormconfig';
+import { MailHelperService } from './_core/services/notifications/mail-helper.service';
+import { MarketingModule } from './rest/api/marketing/marketing.module';
+import { appConfigService } from './_core/services/app-config.service';
+import configuration from '../config/configuration';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env'],
+      load: [configuration],
     }),
-    TypeOrmModule.forRoot(ormconfig),
+    TypeOrmModule.forRoot(appConfigService.getTypeOrmConfig()),
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
@@ -31,7 +33,7 @@ import * as ormconfig from './config/ormconfig';
     }),
     MarketingModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [AppService, MailHelperService],
 })
 export class AppModule {
