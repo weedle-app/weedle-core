@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { MailHelperService } from '../mail-service/mail-helper.service';
 import { PreLaunchLeads } from './entities/pre-launch-leads.entity';
+import { IResponseType } from '../../helpers/response.helper';
 
 @Injectable()
 export class MarketingService {
@@ -16,14 +17,23 @@ export class MarketingService {
   async handlePreLaunchRegistration(
     email: string,
     ipInformation: string,
-  ): Promise<boolean> {
+  ): Promise<IResponseType> {
     const preLaunchUser: QueryDeepPartialEntity<PreLaunchLeads> = {
       email,
       extraData: ipInformation || '',
     };
-    console.log({ preLaunchUser });
+
+    const userExists = await this.preLaunchLeadsEntity.findOne({ email });
+    if (userExists) {
+      return {
+        message: 'User with these details already exists!',
+      };
+    }
+
     this.preLaunchLeadsEntity.insert(preLaunchUser);
     await this.mailHelperService.sendPreLaunchMail({ email });
-    return true;
+    return {
+      message: 'User has been created',
+    };
   }
 }
