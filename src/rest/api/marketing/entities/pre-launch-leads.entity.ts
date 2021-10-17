@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseModelEntity } from '../../../../base-classes/base-entity';
 
 @Entity()
-export class PreLaunchLeads extends BaseEntity {
+export class PreLaunchLeads extends BaseModelEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -1,5 +1,5 @@
-import { BaseAppEntity } from 'src/_core';
 import { Column, Entity, OneToOne } from 'typeorm';
+import { BaseAppEntity } from '../../../../_core/_base/base-app-entity';
 import { UserEntity } from '../../user/entity/user.entity';
 
 @Entity({ name: 'auth' })
@@ -46,7 +46,7 @@ export class AuthEntity extends BaseAppEntity {
 
   @Column({
     type: 'timestamp',
-    default: false,
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   public verification_expiration: Date;
 
@@ -71,13 +71,13 @@ export class AuthEntity extends BaseAppEntity {
 
   @Column({
     type: 'timestamp',
-    default: false,
+    default: () => 'CURRENT_TIMESTAMP(6)',
     nullable: true,
   })
   public reset_code_expiration: Date;
 
   @Column({
-    type: 'timestamp',
+    type: 'boolean',
     default: false,
   })
   public changed_password: boolean;

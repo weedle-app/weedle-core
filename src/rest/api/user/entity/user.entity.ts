@@ -1,5 +1,5 @@
-import { BaseAppEntity } from 'src/_core';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { BaseAppEntity } from '../../../../_core/_base/base-app-entity';
 import { AuthEntity } from '../../auth/entity/auth.entity';
 
 @Entity({ name: 'users' })

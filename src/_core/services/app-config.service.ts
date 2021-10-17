@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
+import * as appRootPath from 'app-root-path';
 import { ConfigFields } from 'src/config-types';
 
 require('dotenv').config();
@@ -38,7 +39,8 @@ export class AppConfigService {
       username: `${process.env.DB_USER}`,
       password: `${process.env.DB_PASSWORD}`,
       database: `${process.env.DB_NAME}`,
-      entities: [join(__dirname, '/../**/**.entity{.ts,.js}')],
+      entities: ['dist/**/*.entity.js'],
+      // [join(appRootPath.toString(), '/**/**.entity{.ts,.js}')],
       synchronize: !this.isProduction(),
       migrationsRun: true,
       logging: true,

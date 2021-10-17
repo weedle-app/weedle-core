@@ -18,7 +18,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Pagination, QueryParser } from '../common';
 import { AppException } from '../exceptions';
 import { CacheService } from '../services/cache.service';
-import { BaseAppEntity } from './base-app.entity';
+import { BaseAppEntity } from './base-app-entity';
 
 export abstract class BaseController<T extends BaseAppEntity> {
   private cacheService: CacheService;

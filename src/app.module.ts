@@ -10,6 +10,7 @@ import { MarketingModule } from './rest/api/marketing/marketing.module';
 import { appConfigService } from './_core/services/app-config.service';
 import configuration from '../config/configuration';
 import { AppService } from './app.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { AppService } from './app.service';
     }),
     MarketingModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [AppService, MailHelperService],
 })
 export class AppModule {

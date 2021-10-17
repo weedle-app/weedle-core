@@ -9,7 +9,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
   });
-  app.setGlobalPrefix('api/v1');
+  console.log(process.env);
+
+  /* app.setGlobalPrefix('api/v1');
   app.useGlobalFilters(new ResponseException());
   app.useGlobalPipes(new ValidationPipe());
 
@@ -25,9 +27,9 @@ async function bootstrap() {
       .build();
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('', app, document);
-  }
+  } */
 
-  await app.listen(config.get('service.port'), () => {
+  await app.listen(process.env.PORT || 3000, () => {
     Logger.log('Service Running...');
   });
 }
