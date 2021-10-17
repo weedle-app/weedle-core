@@ -11,3 +11,7 @@ export enum ConfigFields {
   MAILCHIMP_SERVER_PREFIX = 'MAILCHIMP_SERVER_PREFIX',
   MAILCHIMP_PRE_LAUNCH_LISTID = 'MAILCHIMP_PRE_LAUNCH_LISTID',
 }
+
+export enum Environments {
+  Production = 'prod',
+}

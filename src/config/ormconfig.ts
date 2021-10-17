@@ -3,6 +3,7 @@ dotEnv.config();
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
+import { Environments } from '../config-types';
 
 const config: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -12,7 +13,7 @@ const config: TypeOrmModuleOptions = {
   password: `${process.env.DB_PASSWORD}`,
   database: `${process.env.DB_NAME}`,
   entities: [join(__dirname, '/../**/**.entity{.ts,.js}')],
-  synchronize: false,
+  synchronize: !(process.env.NODE_ENV === Environments.Production),
   migrationsRun: true,
   logging: true,
   ssl: {
