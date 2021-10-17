@@ -15,6 +15,9 @@ const config: TypeOrmModuleOptions = {
   synchronize: false,
   migrationsRun: true,
   logging: true,
+  ssl: {
+    ca: Buffer.from(process.env.SSL_CERT, 'base64').toString('ascii'),
+  },
   migrations: [join(__dirname, '/migrations/**/*{.ts,.js}')],
   cli: {
     migrationsDir: '/src/migrations',
