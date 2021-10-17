@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentryModule } from '@ntegral/nestjs-sentry';
 import { LogLevel } from '@sentry/types';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Connection } from 'typeorm';
 import { ConfigFields } from './config-types';
+import { appConfigService } from './_core/services/app-config.service';
+import configuration from '../config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env'],
+      load: [configuration],
     }),
+    TypeOrmModule.forRoot(appConfigService.getTypeOrmConfig()),
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
@@ -24,7 +29,9 @@ import { ConfigFields } from './config-types';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly connection: Connection) {}
+}
