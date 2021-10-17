@@ -5,12 +5,15 @@ export class PreLaunchLeads extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   fullName: string;
 
-  @Column()
+  @Column({
+    unique: true,
+    nullable: false,
+  })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   extraData: string;
 }
