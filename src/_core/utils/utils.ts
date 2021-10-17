@@ -16,6 +16,7 @@ export class Utils {
    * @return {String}
    **/
   public static cacheKey(req: Request): string {
+    // const _key = this.generateCode(10, true);
     return `${req.protocol}://${req.get('host')}${req.originalUrl}`;
   }
 

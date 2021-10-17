@@ -18,9 +18,9 @@ import { Request, Response, NextFunction } from 'express';
 import { Pagination, QueryParser } from '../common';
 import { AppException } from '../exceptions';
 import { CacheService } from '../services/cache.service';
-import { BaseModel } from './base.model';
+import { BaseAppEntity } from './base-app.entity';
 
-export class BaseController<T extends BaseModel> {
+export abstract class BaseController<T extends BaseAppEntity> {
   private cacheService: CacheService;
   protected lang: any = {
     get: (key = 'data') => {
@@ -61,11 +61,11 @@ export class BaseController<T extends BaseModel> {
       }
       let value: any = await this.service.retrieveExistingResource(payload);
       if (value) {
-        const returnIfFound = this.service.Model.config().returnDuplicates;
+        const returnIfFound = this.service.config().returnDuplicates;
         if (!returnIfFound) {
-          const messages: any = this.service.Model.config().uniques.map(
-            (m: any | string) => ({ [m]: `${m} must be unique` }),
-          );
+          const messages: any = this.service
+            .config()
+            .uniques.map((m: any | string) => ({ [m]: `${m} must be unique` }));
           const appError = new AppException(
             'Duplicate record is not allowed',
             HttpStatus.CONFLICT,

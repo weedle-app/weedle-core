@@ -1,3 +1,4 @@
+import { Document } from 'mongoose';
 import { Pagination, QueryParser } from '../common';
 import { SmsOption } from './sms-option';
 import { MailOption } from './mail-option';

@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class BaseModel extends BaseEntity {
+export abstract class BaseAppEntity extends BaseEntity {
   abstract tableName: string;
 
   @PrimaryGeneratedColumn('uuid')
@@ -16,10 +16,16 @@ export abstract class BaseModel extends BaseEntity {
 
   @Column({
     type: 'boolean',
+    default: true,
+  })
+  public active: boolean;
+
+  @Column({
+    type: 'boolean',
     select: false,
     default: false,
   })
-  public deleted: false;
+  public deleted: boolean;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -34,18 +40,7 @@ export abstract class BaseModel extends BaseEntity {
   })
   public updated_at: Date;
 
-  public config() {
-    return {
-      softDelete: true,
-      uniques: [],
-      returnDuplicates: false,
-      fillables: [],
-      updateFillables: [],
-      hiddenFields: ['deleted'],
-    };
-  }
-
-  public repository(tableName?: string): Repository<BaseModel> {
+  public repository(tableName?: string): Repository<BaseAppEntity> {
     return getRepository(tableName || this.tableName.toLowerCase());
   }
 }

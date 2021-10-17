@@ -4,17 +4,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentryModule } from '@ntegral/nestjs-sentry';
 import { LogLevel } from '@sentry/types';
 import { Connection } from 'typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
-import ormconfig from './config/ormconfig';
+import { appConfigService } from './_core/services/app-config.service';
+import configuration from '../config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env'],
+      load: [configuration],
     }),
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot(appConfigService.getTypeOrmConfig()),
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
@@ -28,8 +29,8 @@ import ormconfig from './config/ormconfig';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
   constructor(private readonly connection: Connection) {}

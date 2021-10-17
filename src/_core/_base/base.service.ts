@@ -1,15 +1,16 @@
 import { AppResponse } from './../common/app-response';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { QueryParser } from '../common/query-parser';
-import { BaseModel } from './base.model';
+import { BaseAppEntity } from './base-app.entity';
 import * as _ from 'lodash';
 import { Pagination } from '../common/pagination';
 import { ResponseOption } from '../interfaces/response-option';
+import { Repository } from 'typeorm';
 
 /**
  * The BaseService class
  */
-export abstract class BaseService<T extends BaseModel> {
+export abstract class BaseService<T extends BaseAppEntity> {
   public routes = {
     create: true,
     findOne: true,
@@ -22,27 +23,21 @@ export abstract class BaseService<T extends BaseModel> {
     process.env.PORT || 4003
   }`;
   public itemPerPage = 10;
-  public entity: T;
+  public entity: Repository<T>;
 
-  public defaultConfig = {
-    config: () => {
-      return {
-        softDelete: true,
-        uniques: [],
-        returnDuplicates: false,
-        fillables: [],
-        updateFillables: [],
-        hiddenFields: ['deleted'],
-      };
-    },
-  };
+  public config() {
+    return {
+      softDelete: true,
+      uniques: [],
+      returnDuplicates: false,
+      fillables: [],
+      updateFillables: [],
+      hiddenFields: ['deleted'],
+    };
+  }
 
-  constructor(protected readonly model: T) {
-    this.modelName = model.tableName;
+  constructor(protected readonly model: Repository<T>) {
     this.entity = model;
-    if (!this.entity.config) {
-      this.entity.config = this.defaultConfig.config;
-    }
   }
 
   public get Model() {
@@ -79,11 +74,11 @@ export abstract class BaseService<T extends BaseModel> {
    * @return {Object}
    */
   public async createNewObject(obj: any): Promise<any | T> {
-    const toFill: string[] = this.entity.config().fillables;
+    const toFill: string[] = this.config().fillables;
     if (toFill && toFill.length > 0) {
       obj = _.pick(obj, ...toFill);
     }
-    return await this.entity.repository().save(obj);
+    return await this.entity.save(obj);
   }
 
   /**
@@ -92,16 +87,16 @@ export abstract class BaseService<T extends BaseModel> {
    * @return {Object}
    * */
   async updateObject(id, obj): Promise<any | T> {
-    const toFill: string[] = this.entity.config().updateFillables;
+    const toFill: string[] = this.config().updateFillables;
     if (toFill && toFill.length > 0) {
       obj = _.pick(obj, ...toFill);
     }
-    const current = await this.entity.repository().findOne({
+    const current = await this.entity.findOne({
       where: { id, deleted: false },
     });
     console.log('current:', current);
     _.extend(current, obj);
-    return await this.entity.repository().save(current);
+    return await current.save();
   }
 
   /**
@@ -110,24 +105,23 @@ export abstract class BaseService<T extends BaseModel> {
    * @param {Object} obj The payload object
    * @returns {Promise<any>}
    */
-  public async findObject(id: any | string): Promise<unknown> {
+  public async findObject(id: any | string): Promise<unknown | T> {
     const condition = { where: { id, deleted: false } };
-    const object: unknown = await this.entity.repository().findOne(condition);
-    return object;
+    return this.entity.findOne(condition);
   }
 
   /**
    * @param {Object} obj The payload object
    * @return {Object}
    */
-  public async retrieveExistingResource(obj: any): Promise<any> {
-    if (this.entity.config().uniques) {
-      const uniquesKeys = this.entity.config().uniques;
+  public async retrieveExistingResource(obj: any): Promise<unknown | T> {
+    if (this.config().uniques) {
+      const uniquesKeys = this.config().uniques;
       const query: any = {};
       for (const key of uniquesKeys) {
         query[key] = obj[key];
       }
-      const found = await this.entity.repository().findOne({
+      const found = await this.entity.findOne({
         where: {
           ...query,
           deleted: false,
@@ -176,22 +170,19 @@ export abstract class BaseService<T extends BaseModel> {
       }
       meta.pagination = pagination.done();
     }
-    if (
-      this.entity.config().hiddenFields &&
-      this.entity.config().hiddenFields.length > 0
-    ) {
+    if (this.config().hiddenFields && this.config().hiddenFields.length > 0) {
       const isFunction = typeof value.toJSON === 'function';
       if (_.isArray(value)) {
         value = value.map((v) =>
           typeof v === 'string'
             ? v
             : _.omit(isFunction ? v.toJSON() : v, [
-                ...this.entity.config().hiddenFields,
+                ...this.config().hiddenFields,
               ]),
         );
       } else {
         value = _.omit(isFunction ? value.toJSON() : value, [
-          ...this.entity.config().hiddenFields,
+          ...this.config().hiddenFields,
         ]);
       }
     }
@@ -228,8 +219,8 @@ export abstract class BaseService<T extends BaseModel> {
     }
     console.log('custom-query:', query);
     return {
-      value: await this.entity.repository().find({ ...query }),
-      count: await this.entity.repository().count({ ...query }),
+      value: await this.entity.find({ ...query }),
+      count: await this.entity.count({ ...query }),
     };
   }
 
@@ -238,11 +229,11 @@ export abstract class BaseService<T extends BaseModel> {
    * @return {Promise<Object>}
    */
   public async deleteObject(object: any): Promise<any> {
-    if (this.entity.config().softDelete) {
+    if (this.config().softDelete) {
       _.extend(object, { deleted: true });
-      object = await this.entity.repository().save(object);
+      object = await this.entity.save(object);
     } else {
-      object = await this.entity.repository().remove(object);
+      object = await this.entity.remove(object);
     }
     return object;
   }
@@ -252,8 +243,6 @@ export abstract class BaseService<T extends BaseModel> {
    * @return {Promise<Object>}
    */
   public async searchObject(queryParser: QueryParser = null): Promise<any> {
-    return await this.entity
-      .repository()
-      .findOne({ where: { ...queryParser.query } });
+    return await this.entity.findOne({ where: { ...queryParser.query } });
   }
 }

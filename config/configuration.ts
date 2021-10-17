@@ -19,17 +19,18 @@ export default () => ({
     },
     database: {
       postgres: {
-        host: process.env.DB_HOST || '',
-        username: process.env.DB_USERNAME || '',
-        password: process.env.DB_PASSWORD || '',
-        DB_NAME: process.env.DB_NAME || '',
+        host: `${process.env.DB_HOST || ''}`,
+        username: `${process.env.DB_USERNAME || ''}`,
+        password: `${process.env.DB_PASSWORD || ''}`,
+        post: Number(process.env.DB_PORT || ''),
+        database: `${process.env.DB_DATABASE || ''}`,
       },
     },
     google: {
       gcs: {
-        projectId: process.env.GOOGLE_CLOUD_PROJECT_ID || '',
-        keyFile: process.env.GOOGLE_CLOUD_KEYFILE || '',
-        bucket: process.env.GOOGLE_CLOUD_STORAGE_BUCKET || '',
+        projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+        keyFile: process.env.GOOGLE_CLOUD_KEYFILE,
+        bucket: process.env.GOOGLE_CLOUD_STORAGE_BUCKET,
       },
     },
     rabbitMQ: {
