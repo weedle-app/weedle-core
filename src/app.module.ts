@@ -7,6 +7,10 @@ import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
+import { MailHelperService } from './services/mail-service/mail-helper.service';
+import { MarketingModule } from './services/marketing/marketing.module';
+import { MarketingController } from './services/marketing/marketing.controller';
+import { MarketingService } from './services/marketing/marketing.service';
 import * as ormconfig from './config/ormconfig';
 
 @Module({
@@ -27,9 +31,10 @@ import * as ormconfig from './config/ormconfig';
       }),
       inject: [ConfigService],
     }),
+    MarketingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailHelperService],
 })
 export class AppModule {
   constructor(private readonly connection: Connection) {}
