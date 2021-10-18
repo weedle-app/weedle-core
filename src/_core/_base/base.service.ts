@@ -1,7 +1,7 @@
 import { AppResponse } from './../common/app-response';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { QueryParser } from '../common/query-parser';
-import { BaseAppEntity } from './base-app.entity';
+import { BaseAppEntity } from './base-app-entity';
 import * as _ from 'lodash';
 import { Pagination } from '../common/pagination';
 import { ResponseOption } from '../interfaces/response-option';

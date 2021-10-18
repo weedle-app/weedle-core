@@ -5,8 +5,12 @@ import { SentryModule } from '@ntegral/nestjs-sentry';
 import { LogLevel } from '@sentry/types';
 import { Connection } from 'typeorm';
 import { ConfigFields } from './config-types';
+import { MailHelperService } from './_core/services/notifications/mail-helper.service';
+import { MarketingModule } from './rest/api/marketing/marketing.module';
 import { appConfigService } from './_core/services/app-config.service';
 import configuration from '../config/configuration';
+import { AppService } from './app.service';
+// import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -28,10 +32,12 @@ import configuration from '../config/configuration';
       }),
       inject: [ConfigService],
     }),
+    MarketingModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [MailHelperService],
+  // providers: [],
 })
 export class AppModule {
-  constructor(private readonly connection: Connection) {}
+  // constructor(private readonly connection: Connection) {}
 }

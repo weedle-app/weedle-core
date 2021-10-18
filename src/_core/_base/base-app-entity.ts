@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 export abstract class BaseAppEntity extends BaseEntity {
-  abstract tableName: string;
+  abstract tableName?: string;
 
   @PrimaryGeneratedColumn('uuid')
   public id: string;

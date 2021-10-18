@@ -6,9 +6,7 @@ import { AppModule } from './app.module';
 import { ResponseException, ValidationPipe } from './_core';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    cors: true,
-  });
+  const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1');
   app.useGlobalFilters(new ResponseException());
   app.useGlobalPipes(new ValidationPipe());
@@ -16,7 +14,7 @@ async function bootstrap() {
   const config = app.get(ConfigService);
   console.log(`port::::${config.get('service.port')}`);
 
-  if (config.get('api.enableSwagger')) {
+  if (config.get('api.enable_swagger')) {
     const options = new DocumentBuilder()
       .setTitle('Weedle Core Service')
       .setDescription('The Weedle Core Service API description')
@@ -28,7 +26,7 @@ async function bootstrap() {
   }
 
   await app.listen(config.get('service.port'), () => {
-    Logger.log('Service Running...');
+    Logger.log(`Service Running @ ::: ${config.get('service.host')}`);
   });
 }
 bootstrap();

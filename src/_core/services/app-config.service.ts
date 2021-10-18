@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { join } from 'path';
+import * as appRootPath from 'app-root-path';
 import { ConfigFields } from 'src/config-types';
 
 require('dotenv').config();
@@ -26,27 +28,37 @@ export class AppConfigService {
 
   public isProduction() {
     const mode = this.getValue(ConfigFields.NODE_ENV, false);
-    return mode !== 'production';
+    return mode === 'production';
   }
 
   public getTypeOrmConfig(): TypeOrmModuleOptions {
-    return {
+    let ormConfig: TypeOrmModuleOptions = {
       type: 'postgres',
-      host: this.getValue(ConfigFields.DB_HOST),
-      port: Number(this.getValue(ConfigFields.DB_PORT)),
-      username: this.getValue(ConfigFields.DB_USER),
-      password: this.getValue(ConfigFields.DB_PASSWORD),
-      database: this.getValue(ConfigFields.DB_NAME),
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      host: `${process.env.DB_HOST}`,
+      port: Number(process.env.DB_PORT),
+      username: `${process.env.DB_USER}`,
+      password: `${process.env.DB_PASSWORD}`,
+      database: `${process.env.DB_NAME}`,
+      entities: ['dist/**/*.entity.js'],
+      // [join(appRootPath.toString(), '/**/**.entity{.ts,.js}')],
+      synchronize: !this.isProduction(),
       migrationsRun: true,
       logging: true,
-      migrations: ['src/migrations/**/*{.ts,.js}'],
+      migrations: [join(__dirname, '/migrations/**/*{.ts,.js}')],
       cli: {
         migrationsDir: '/src/migrations',
       },
-      ssl: this.isProduction(),
     };
+
+    if (process.env.SSL_CERT) {
+      ormConfig = {
+        ...ormConfig,
+        ssl: {
+          ca: Buffer.from(process.env.SSL_CERT, 'base64').toString('ascii'),
+        },
+      };
+    }
+    return ormConfig;
   }
 }
 const appConfigService = new AppConfigService(process.env).ensureValues([
