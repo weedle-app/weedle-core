@@ -15,10 +15,17 @@ export class UserEntity extends BaseAppEntity {
   @Column({
     type: 'varchar',
     enum: ['customer', 'admin'],
+    default: 'customer',
   })
   public profile_type: string;
 
+  @Column({
+    type: 'varchar',
+    unique: true,
+  })
+  public auth_id: string;
+
   @OneToOne(() => AuthEntity, (auth) => auth.user)
-  @JoinColumn()
+  @JoinColumn({ name: 'auth_id' })
   public auth: AuthEntity;
 }

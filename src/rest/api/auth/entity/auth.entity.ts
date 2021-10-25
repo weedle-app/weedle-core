@@ -14,6 +14,18 @@ export class AuthEntity extends BaseAppEntity {
 
   @Column({
     type: 'varchar',
+    nullable: false,
+  })
+  public first_name: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
+  })
+  public last_name: string;
+
+  @Column({
+    type: 'varchar',
     select: false,
   })
   public password: string;
