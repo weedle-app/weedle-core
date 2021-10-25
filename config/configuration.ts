@@ -12,6 +12,13 @@ export default () => ({
     url: `${process.env.BASE_URL || 'http://localhost'}:${
       process.env.PORT || 4003
     }`,
+    verify_redirect_url:
+      `${process.env.DOMAIN}/verify` ||
+      `http://${process.env.BASE_URL}:${process.env.PORT}/verify`,
+    reset_redirect_url:
+      `${process.env.DOMAIN}/reset` ||
+      `http://${process.env.BASE_URL}:${process.env.PORT}/reset`,
+    no_reply: { email: 'no-reply@joinweedle.com', name: 'Weedle App' },
     version: 1,
     lang: 'en',
     pagination: {
@@ -25,6 +32,9 @@ export default () => ({
         post: Number(process.env.DB_PORT || ''),
         database: `${process.env.DB_DATABASE || ''}`,
       },
+    },
+    email_templates: {
+      verify_account: process.env.VERIFY_ACCOUNT || '',
     },
     google: {
       gcs: {

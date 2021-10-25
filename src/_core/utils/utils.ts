@@ -1,5 +1,4 @@
 import * as crypto from 'crypto';
-import _ from 'lodash';
 import moment from 'moment-timezone';
 import { Request } from 'express';
 
@@ -12,11 +11,40 @@ export class Utils {
   }
 
   /**
+   * @param {Number} size code length
+   * @param {Boolean} alpha Check if it's alpha numeral
+   * @return {String} The code
+   **/
+  public static generateCode(size = 4, alpha = false) {
+    const result: any = [];
+    const characters: string | string[] = alpha
+      ? '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+      : '0123456789';
+
+    for (let i = 0; i < size; i++) {
+      result.push(
+        characters.charAt(Math.floor(Math.random() * characters.length)),
+      );
+    }
+    return result.join('');
+  }
+
+  /**
+   * @param {Number} size Hour count
+   * @return {Date} The date
+   */
+  public static addHourToDate(size: number) {
+    const date = new Date();
+    const hours = date.getHours() + size;
+    date.setHours(hours);
+    return date;
+  }
+
+  /**
    * @param {Request} objectIds
    * @return {String}
    **/
   public static cacheKey(req: Request): string {
-    // const _key = this.generateCode(10, true);
     return `${req.protocol}://${req.get('host')}${req.originalUrl}`;
   }
 
@@ -55,24 +83,6 @@ export class Utils {
     }
   }
 
-  /**
-   * @param {Number} size code length
-   * @param {Boolean} alpha Check if it's alpha numeral
-   * @return {String} The code
-   **/
-  public static generateCode = (size = 4, alpha = false) => {
-    const result: any = [];
-    const characters: string | string[] = alpha
-      ? '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-      : '0123456789';
-
-    for (let i = 0; i < size; i++) {
-      result.push(
-        characters.charAt(Math.floor(Math.random() * characters.length)),
-      );
-    }
-    return result.join('');
-  };
   /**
    * Convert callback to promise;
    *  @param {String} string
