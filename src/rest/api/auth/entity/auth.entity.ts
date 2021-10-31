@@ -14,13 +14,13 @@ export class AuthEntity extends BaseAppEntity {
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
   })
   public first_name: string;
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
   })
   public last_name: string;
 
