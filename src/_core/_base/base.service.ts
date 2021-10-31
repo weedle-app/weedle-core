@@ -32,8 +32,8 @@ export abstract class BaseService<T extends BaseAppEntity> {
       returnDuplicates: false,
       fillables: [],
       updateFillables: [],
-      hiddenFields: ['deleted'],
-      excludedFields: ['deleted'],
+      hiddenFields: ['deleted', 'tableName'],
+      excludedFields: ['deleted', 'tableName'],
     };
   }
 
@@ -120,7 +120,9 @@ export abstract class BaseService<T extends BaseAppEntity> {
     id: any | string,
     queryParser?: QueryParser,
   ): Promise<unknown | T> {
-    const query = this.prepareQuery(queryParser);
+    const query = this.prepareQuery(
+      _.isUndefined(queryParser) ? new QueryParser({}) : queryParser,
+    );
     const condition = {
       where: { id, ...query.where },
       ..._.omit(query, 'where'),
@@ -174,12 +176,13 @@ export abstract class BaseService<T extends BaseAppEntity> {
     token,
   }: ResponseOption): Promise<any> {
     const meta: any = AppResponse.getSuccessMeta();
+    console.log('message:', message);
     if (token) {
       meta.token = token;
     }
     _.extend(meta, { status_code: code });
     if (message) {
-      meta.message = message;
+      _.extend(meta, { message });
     }
     if (pagination && !queryParser.getAll) {
       pagination.totalCount = count;

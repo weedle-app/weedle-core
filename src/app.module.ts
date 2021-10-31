@@ -1,25 +1,25 @@
+import { CoreModule } from './rest/api/core/core.module';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SentryModule } from '@ntegral/nestjs-sentry';
-import { LogLevel } from '@sentry/types';
-import { Connection } from 'typeorm';
-import { ConfigFields } from './config-types';
 import { MailHelperService } from './_core/services/notifications/mail-helper.service';
 import { MarketingModule } from './rest/api/marketing/marketing.module';
 import { appConfigService } from './_core/services/app-config.service';
 import configuration from '../config/configuration';
-import { AppService } from './app.service';
-// import { AppController } from './app.controller';
+import { AuthModule } from './rest/api/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
+    CoreModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
       load: [configuration],
     }),
     TypeOrmModule.forRoot(appConfigService.getTypeOrmConfig()),
+<<<<<<< HEAD
+=======
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
@@ -32,6 +32,7 @@ import { AppService } from './app.service';
       }),
       inject: [ConfigService],
     }),
+>>>>>>> develop
     MarketingModule,
   ],
   controllers: [],

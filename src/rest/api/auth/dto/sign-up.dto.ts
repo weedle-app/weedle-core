@@ -20,7 +20,6 @@ export class SignUpDto {
   public readonly email: string;
 
   @ApiProperty({ example: 'FKeys' })
-  @IsEmail()
   @IsNotEmpty()
   @Transform((s) => String(s.value).trim().toLowerCase())
   public readonly username: string;

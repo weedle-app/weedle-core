@@ -3,7 +3,7 @@ import { IEmailName, MailOption } from '../../../_core';
 import { AuthEntity } from './entity/auth.entity';
 import configuration from '../../../../config/configuration';
 import * as _ from 'lodash';
-import lang from 'src/lang';
+import lang from '../../../lang';
 
 export default class AuthEmail {
   public static verifyEmail(
@@ -19,7 +19,9 @@ export default class AuthEmail {
     const link = _.isEmpty(verify_redirect_url)
       ? `${verify_redirect_url}/${email}/${verifyToken}`
       : `${
-          configuration().service.verify_redirect_url
+          _.isEmpty(configuration().service.verify_redirect_url)
+            ? configuration().service.verify_redirect_url
+            : `http://localhost:${process.env.PORT}/verify`
         }/${email}/${verifyToken}`;
     const content = {
       subject: `${configuration().service.name} - Verify Account`,

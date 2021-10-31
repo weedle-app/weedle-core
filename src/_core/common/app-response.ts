@@ -9,7 +9,7 @@ export class AppResponse {
    * @return {Object} The success response object
    * */
   static getSuccessMeta(success = true) {
-    return { statusCode: HttpStatus.OK, success };
+    return { status_code: HttpStatus.OK, success };
   }
 
   /**

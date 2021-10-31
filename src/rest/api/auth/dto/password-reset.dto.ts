@@ -8,21 +8,21 @@ export class PasswordReset {
   @Transform((s) => String(s.value).trim().toLowerCase())
   @ValidateIf((o) => !o.email)
   @IsEmail()
-  readonly email: string;
+  public readonly email: string;
 
   @ApiProperty({ example: '123455 | ksorutoIH' })
   @IsString()
   @IsOptional()
-  passwordResetCode: string;
+  public password_reset_code: string;
 
   @ApiProperty({ example: '3820' })
   @IsString()
   @IsOptional()
   @Transform((s) => String(s.value).trim())
-  readonly password: string;
+  public readonly password: string;
 
   @ApiProperty({ example: 'lkjhdyuie9376tyu3i3hye3i' })
   @IsOptional()
   @IsString()
-  token: string;
+  public token: string;
 }

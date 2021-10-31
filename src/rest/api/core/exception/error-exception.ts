@@ -1,4 +1,4 @@
-import { AppException } from './../../../../_core/exceptions/app.exception';
+import { AppException } from './../../../../_core';
 import { HttpStatus } from '@nestjs/common';
 import lang from '../../../../lang';
 
@@ -31,15 +31,15 @@ export class ErrorException extends AppException {
 
   public static get ACCOUNT_NOT_FOUND() {
     return new this(
-      lang.get('auth').account_not_found,
+      lang.get('email').account_not_found,
       HttpStatus.UNAUTHORIZED,
       AuthExceptionStatus.AUTH_DATA_NOT_FOUND,
     );
   }
 
-  public static get INVALID_CREDENTIALS() {
+  public static get INVALID_CREDENTIAL() {
     return new this(
-      lang.get('auth').credentail_incorrect,
+      lang.get('auth').auth_failed,
       HttpStatus.UNAUTHORIZED,
       AuthExceptionStatus.AUTH_DATA_NOT_FOUND,
     );
