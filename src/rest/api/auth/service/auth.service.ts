@@ -51,17 +51,17 @@ export class AuthService extends BaseService<AuthEntity> {
       }
       const authObject: any = {
         ...signUpDto,
-        password: signUpDto.password,
-        verification: Utils.generateCode(4).toFixed(),
+        password: await SCryptCryptoFactory.hash(signUpDto.password),
+        verification_code: Utils.generateCode(4),
         verification_expiration: Utils.addHourToDate(1),
       };
       auth = await this.model.save({ ...authObject });
-      const user = await this.userService.createNewObject({
+      await this.userService.createNewObject({
         auth_id: auth.id,
-        auth,
+        email: auth.email,
         profile_type: 'customer',
       });
-      const token = await this.jwt.sign(AuthService.getJwtPayload(auth, user));
+      const token = this.jwt.sign(AuthService.getJwtPayload(auth));
       return {
         auth,
         token,
@@ -76,13 +76,11 @@ export class AuthService extends BaseService<AuthEntity> {
    * @return {Object} returns a saved auth object
    */
   async signIn(signInDto: SignInDto) {
+    console.log('email:', signInDto.email);
     try {
-      const auth = await this.model.findOne(
-        { email: signInDto.email },
-        { select: ['user'] },
-      );
+      const auth = await this.model.findOne({ email: signInDto.email });
       if (!auth) {
-        throw ErrorException.INVALID_CREDENTIALS;
+        throw ErrorException.INVALID_CREDENTIAL;
       }
       const isAuthenticated = await SCryptCryptoFactory.compare(
         signInDto.password,
@@ -91,7 +89,9 @@ export class AuthService extends BaseService<AuthEntity> {
       if (!isAuthenticated) {
         throw ErrorException.AUTHENTICATION_FAILED;
       }
-      return auth;
+      return {
+        auth,
+      };
     } catch (e) {
       throw e;
     }
@@ -102,9 +102,14 @@ export class AuthService extends BaseService<AuthEntity> {
    * @param {Object} condition: SignUpDto gotten from payload
    * @return {Object} returns a saved auth object
    */
-  async verify(data: any, condition: any) {
+  async verify(
+    data: any,
+    condition: any,
+    verifyType = 'code',
+  ): Promise<AuthEntity> {
     let auth = await this.model.findOne({ ...condition });
-    const error = await this.iCanVerify(auth, data);
+    console.log('auth:', auth);
+    const error = await this.iCanVerify(auth, data, verifyType);
     if (error instanceof ErrorException) {
       throw error;
     }
@@ -120,14 +125,14 @@ export class AuthService extends BaseService<AuthEntity> {
   /**
    * @param {Object} auth The auth object
    * @param {Object} data The payload data
+   * @param {String} verifyType The type to verify
    * @return {Object} returns error or null for pass
    */
-  async iCanVerify(auth: AuthEntity, data: any) {
+  async iCanVerify(auth: AuthEntity, data: any, verifyType = 'code') {
+    const code =
+      verifyType === 'code' ? data.verification_code : auth.verification_code;
     if (data.token) {
-      const userHash = crypto
-        .createHash('md5')
-        .update(data.verification_code)
-        .digest('hex');
+      const userHash = crypto.createHash('md5').update(code).digest('hex');
       if (userHash !== data.token) {
         return ErrorException.INVALID_TOKEN;
       }
@@ -152,11 +157,12 @@ export class AuthService extends BaseService<AuthEntity> {
    */
   async sendVerifyToken(payload: SendVerificationDto) {
     const auth = await this.model.findOne({ email: payload.email });
+    console.log('auth:', auth);
     if (!auth) {
-      return ErrorException.ACCOUNT_NOT_FOUND;
+      throw ErrorException.ACCOUNT_NOT_FOUND;
     }
     if (auth.account_verified) {
-      return ErrorException.ACCOUNT_VERIFIED;
+      throw ErrorException.ACCOUNT_VERIFIED;
     }
     _.extend(auth, {
       verification_expiration: Utils.addHourToDate(1),
@@ -178,8 +184,8 @@ export class AuthService extends BaseService<AuthEntity> {
       throw ErrorException.ACCOUNT_VERIFIED;
     }
     _.extend(auth, {
-      password_reset_code: Utils.addHourToDate(1),
-      password_code_expiration: Utils.generateCode(4),
+      password_reset_code: Utils.generateCode(4),
+      reset_code_expiration: Utils.addHourToDate(1),
     });
     return this.model.save(auth);
   }
@@ -199,7 +205,7 @@ export class AuthService extends BaseService<AuthEntity> {
       auth.password,
     );
     if (!isAuthenticated) {
-      throw ErrorException.INVALID_CREDENTIALS;
+      throw ErrorException.INVALID_CREDENTIAL;
     }
     const password = await SCryptCryptoFactory.hash(payload.password);
     _.extend(auth, { password });
@@ -246,11 +252,12 @@ export class AuthService extends BaseService<AuthEntity> {
    */
   async iCannotResetPassword(auth: AuthEntity, object: any) {
     if (!auth) {
-      return ErrorException.ERROR(
-        lang.get('auth').account_does_not_exist,
+      throw ErrorException.ERROR(
+        lang.get('auth').account_not_found,
         HttpStatus.NOT_FOUND,
       );
     }
+    console.log('auth', auth);
     if (!(auth.reset_code_expiration && auth.password_reset_code)) {
       throw ErrorException.ERROR(
         lang.get('auth').password_reset_unauthorized,
@@ -267,7 +274,7 @@ export class AuthService extends BaseService<AuthEntity> {
         auth.password_reset_code !== object.password_reset_code)
     ) {
       return ErrorException.ERROR(
-        lang.get('auth').password_reset_unauthorized,
+        lang.get('auth').incorrect_reset,
         HttpStatus.UNAUTHORIZED,
       );
     }
@@ -286,11 +293,10 @@ export class AuthService extends BaseService<AuthEntity> {
    * @param {Object} user The main property
    * @return {Object} returns the main error if main cannot verified
    */
-  static getJwtPayload(auth: AuthEntity, user: UserEntity) {
+  static getJwtPayload(auth: AuthEntity) {
     return {
       auth_id: auth.id,
-      email: user.email,
-      profile_type: user.profile_type,
+      email: auth.email,
     };
   }
 }

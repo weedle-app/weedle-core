@@ -26,7 +26,6 @@ export class AuthEntity extends BaseAppEntity {
 
   @Column({
     type: 'varchar',
-    select: false,
   })
   public password: string;
 
@@ -59,13 +58,13 @@ export class AuthEntity extends BaseAppEntity {
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
+    nullable: true,
   })
   public verification_expiration: Date;
 
   @Column({
     type: 'varchar',
     nullable: true,
-    default: false,
   })
   public verification_code: string;
 

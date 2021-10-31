@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import * as _ from 'lodash';
 import { join } from 'path';
-import * as appRootPath from 'app-root-path';
 import { ConfigFields } from 'src/config-types';
 
 require('dotenv').config();
@@ -32,7 +32,7 @@ export class AppConfigService {
   }
 
   public getTypeOrmConfig(): TypeOrmModuleOptions {
-    return {
+    const dbConfig: TypeOrmModuleOptions = {
       type: 'postgres',
       host: `${process.env.DB_HOST}`,
       port: Number(process.env.DB_PORT),
@@ -40,18 +40,23 @@ export class AppConfigService {
       password: `${process.env.DB_PASSWORD}`,
       database: `${process.env.DB_NAME}`,
       entities: ['dist/**/*.entity.js'],
-      // [join(appRootPath.toString(), '/**/**.entity{.ts,.js}')],
+      // entities: [join(appRootPath.toString(), '/**/**.entity{.ts,.js}')],
       synchronize: !this.isProduction(),
       migrationsRun: true,
       logging: true,
-      ssl: {
-        ca: Buffer.from(process.env.SSL_CERT, 'base64').toString('ascii'),
-      },
       migrations: [join(__dirname, '/migrations/**/*{.ts,.js}')],
       cli: {
         migrationsDir: '/src/migrations',
       },
     };
+    // if (this.isProduction()) {
+    _.extend(dbConfig, {
+      ssl: {
+        ca: Buffer.from(process.env.SSL_CERT || '', 'base64').toString('ascii'),
+      },
+    });
+    // }
+    return dbConfig;
   }
 }
 const appConfigService = new AppConfigService(process.env).ensureValues([

@@ -24,6 +24,9 @@ export default () => ({
     pagination: {
       items_per_page: 10,
     },
+    jwt: {
+      expires_in: `${process.env.JWT_EXPIRATIONS}` || '60d',
+    },
     database: {
       postgres: {
         host: `${process.env.DB_HOST || ''}`,
@@ -39,12 +42,12 @@ export default () => ({
     google: {
       gcs: {
         projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-        keyFile: process.env.GOOGLE_CLOUD_KEYFILE,
+        keyFile: process.env.GOOGLE_CLOUD_KEY_FILE,
         bucket: process.env.GOOGLE_CLOUD_STORAGE_BUCKET,
       },
     },
     rabbitMQ: {
-      url: process.env.RABBITMQ_URL || '',
+      url: process.env.RABBIT_MQ_URL || '',
     },
     amazon: {
       s3: {
