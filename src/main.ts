@@ -6,8 +6,9 @@ import { AppModule } from './app.module';
 import { ResponseException, ValidationPipe } from './_core';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  console.log('port-here');
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+  });
   app.setGlobalPrefix('api/v1');
   app.useGlobalFilters(new ResponseException());
   app.useGlobalPipes(new ValidationPipe());
@@ -23,7 +24,7 @@ async function bootstrap() {
       .addBearerAuth()
       .build();
     const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('', app, document);
+    SwaggerModule.setup('/docs-2', app, document);
   }
 
   await app.listen(config.get('service.port'), () => {

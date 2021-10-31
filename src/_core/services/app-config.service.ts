@@ -40,7 +40,6 @@ export class AppConfigService {
       password: `${process.env.DB_PASSWORD}`,
       database: `${process.env.DB_NAME}`,
       entities: ['dist/**/*.entity.js'],
-      // entities: [join(appRootPath.toString(), '/**/**.entity{.ts,.js}')],
       synchronize: !this.isProduction(),
       migrationsRun: true,
       logging: true,
@@ -55,7 +54,6 @@ export class AppConfigService {
         ca: Buffer.from(process.env.SSL_CERT || '', 'base64').toString('ascii'),
       },
     });
-    // }
     return dbConfig;
   }
 }

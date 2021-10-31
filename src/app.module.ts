@@ -18,6 +18,21 @@ import { AuthModule } from './rest/api/auth/auth.module';
       load: [configuration],
     }),
     TypeOrmModule.forRoot(appConfigService.getTypeOrmConfig()),
+<<<<<<< HEAD
+=======
+    SentryModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (cfg: ConfigService) => ({
+        dsn: cfg.get(ConfigFields.SENTRY_DSN),
+        debug: false,
+        environment: cfg.get(ConfigFields.NODE_ENV),
+        tracesSampleRate: 1.0,
+        // release: 'some_release', | null, // must create a release in sentry.io dashboard
+        logLevel: LogLevel.Error, //based on sentry.io loglevel //
+      }),
+      inject: [ConfigService],
+    }),
+>>>>>>> develop
     MarketingModule,
   ],
   controllers: [],
