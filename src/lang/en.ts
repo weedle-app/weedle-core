@@ -10,7 +10,7 @@ export default {
   },
   auth: {
     change_password:
-      'Please change your password, you are using temporary password!',
+      'Please change your password, you are using temporary password! ',
     invalid_token: 'Failed to authenticate token.',
     no_auth_token: 'No authorization token provided',
     authentication_failed: 'Authentication Failed! Wrong email or password',
