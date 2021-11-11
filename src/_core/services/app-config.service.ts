@@ -49,11 +49,11 @@ export class AppConfigService {
       },
     };
     // if (this.isProduction()) {
-    _.extend(dbConfig, {
+    /*_.extend(dbConfig, {
       ssl: {
         ca: Buffer.from(process.env.SSL_CERT || '', 'base64').toString('ascii'),
       },
-    });
+    });*/
     return dbConfig;
   }
 }
