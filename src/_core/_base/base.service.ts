@@ -32,7 +32,8 @@ export abstract class BaseService<T extends BaseAppEntity> {
       returnDuplicates: false,
       fillables: [],
       updateFillables: [],
-      hiddenFields: ['deleted'],
+      hiddenFields: ['deleted', 'tableName'],
+      excludedFields: ['deleted', 'tableName'],
     };
   }
 
@@ -75,7 +76,12 @@ export abstract class BaseService<T extends BaseAppEntity> {
    */
   public async createNewObject(obj: any): Promise<any | T> {
     const toFill: string[] = this.config().fillables;
+    const excludeFields = this.config().excludedFields;
     if (toFill && toFill.length > 0) {
+      _.omit(
+        obj,
+        excludeFields && excludeFields.length > 0 ? excludeFields : null,
+      );
       obj = _.pick(obj, ...toFill);
     }
     return await this.entity.save(obj);
@@ -84,16 +90,20 @@ export abstract class BaseService<T extends BaseAppEntity> {
   /**
    * @param {Object} id The payload object
    * @param {Object} obj The payload object
+   * @param {QueryParser} queryParser The queryParser object
    * @return {Object}
    * */
-  async updateObject(id, obj): Promise<any | T> {
+  async updateObject(id, obj, queryParser?: QueryParser): Promise<any | T> {
     const toFill: string[] = this.config().updateFillables;
     if (toFill && toFill.length > 0) {
       obj = _.pick(obj, ...toFill);
     }
-    const current = await this.entity.findOne({
-      where: { id, deleted: false },
-    });
+    const query = this.prepareQuery(queryParser);
+    const condition = {
+      where: { id, ...query.where },
+      ..._.omit(query, 'where'),
+    };
+    const current = await this.entity.findOne({ ...condition });
     console.log('current:', current);
     _.extend(current, obj);
     return await current.save();
@@ -103,11 +113,21 @@ export abstract class BaseService<T extends BaseAppEntity> {
    *
    * @param {Object} id The payload id object
    * @param {Object} obj The payload object
+   * @param {QueryParser} queryParser The queryParser object
    * @returns {Promise<any>}
    */
-  public async findObject(id: any | string): Promise<unknown | T> {
-    const condition = { where: { id, deleted: false } };
-    return this.entity.findOne(condition);
+  public async findObject(
+    id: any | string,
+    queryParser?: QueryParser,
+  ): Promise<unknown | T> {
+    const query = this.prepareQuery(
+      _.isUndefined(queryParser) ? new QueryParser({}) : queryParser,
+    );
+    const condition = {
+      where: { id, ...query.where },
+      ..._.omit(query, 'where'),
+    };
+    return this.entity.findOne({ ...condition });
   }
 
   /**
@@ -156,12 +176,13 @@ export abstract class BaseService<T extends BaseAppEntity> {
     token,
   }: ResponseOption): Promise<any> {
     const meta: any = AppResponse.getSuccessMeta();
+    console.log('message:', message);
     if (token) {
       meta.token = token;
     }
     _.extend(meta, { status_code: code });
     if (message) {
-      meta.message = message;
+      _.extend(meta, { message });
     }
     if (pagination && !queryParser.getAll) {
       pagination.totalCount = count;
@@ -199,6 +220,15 @@ export abstract class BaseService<T extends BaseAppEntity> {
     queryParser: QueryParser,
   ): Promise<any> {
     console.log('queryParser:', queryParser);
+    const query = this.prepareQuery(queryParser, pagination);
+    console.log('custom-query:', query);
+    return {
+      value: await this.model.find({ ...query }),
+      count: await this.model.count({ ...query }),
+    };
+  }
+
+  private prepareQuery(queryParser: QueryParser, pagination?: Pagination) {
     const query: any = { where: { ...queryParser.query } };
     if (!_.isEmpty(queryParser.selection) && queryParser.selection.length > 0) {
       _.extend(query, { select: queryParser.selection });
@@ -214,14 +244,11 @@ export abstract class BaseService<T extends BaseAppEntity> {
             : queryParser.sort,
       });
     }
-    if (!queryParser.getAll) {
+    if (!queryParser.getAll && pagination) {
       _.extend(query, { skip: pagination.skip, take: pagination.perPage });
     }
     console.log('custom-query:', query);
-    return {
-      value: await this.entity.find({ ...query }),
-      count: await this.entity.count({ ...query }),
-    };
+    return query;
   }
 
   /**

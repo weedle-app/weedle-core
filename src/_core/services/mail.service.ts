@@ -1,29 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JobService } from './job.service';
+import { ConfigService } from '@nestjs/config';
 import { MailOption, SmsOption } from '../interfaces';
-import { EmailJob, IEmailName, SmsJob } from '../jobs';
+import { IEmailName, SmsJob, EmailJob } from '../jobs';
 import { QueueTasks } from '../common';
 
 @Injectable()
-export class CoreService {
+export class MailService {
   constructor(
     private readonly config: ConfigService,
     private readonly jobService: JobService,
   ) {}
 
-  queueToSendEmail({
-    emailName,
-    fromEmail,
-    content,
-    subject,
-    template,
-  }: MailOption) {
-    this.handleEmail(emailName, fromEmail, subject, template, content);
+  queueToSendEmail(option: MailOption) {
+    this.handleEmail(
+      option.emailName,
+      option.fromEmail,
+      option.subject,
+      option.template,
+      option.content,
+    );
   }
 
-  queueToSendSMS(option: SmsOption) {
-    this.handleSMS(option);
+  queueToSendSms(option: SmsOption) {
+    this.handleSMS(option.mobile.phoneNumber, option.template, option.content);
   }
 
   handleEmail(
@@ -31,24 +31,24 @@ export class CoreService {
     fromEmail: IEmailName,
     subject: string,
     template: string,
-    additionContent: any = {},
+    additionalContent: any = {},
   ) {
     const emailJob = new EmailJob()
       .setFrom(fromEmail)
       .setTo(emailName)
       .setSubject(subject)
       .setTemplate(template)
-      .setContent(additionContent);
+      .setContent(additionalContent);
 
     this.jobService.addJobToQueue(emailJob, QueueTasks.SEND_EMAIL);
   }
 
-  handleSMS({ content, template, mobile: { phoneNumber } }: SmsOption) {
+  handleSMS(phone: string, template: string, content: any, config: any = {}) {
     const job = new SmsJob()
-      .setFrom(content.from || '')
-      .setTo(phoneNumber)
+      .setFrom(config.from)
+      .setTo(phone)
       .setTemplate(template)
-      .setContent(content || {});
+      .setContent(content);
 
     this.jobService.addJobToQueue(job, QueueTasks.SEND_SMS);
   }

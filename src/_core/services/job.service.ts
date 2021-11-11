@@ -11,7 +11,7 @@ export class JobService {
     private readonly client: ClientProxy,
   ) {}
 
-  public addJobQueue(job: Job, task: QueueTasks) {
+  public addJobToQueue(job: Job, task: QueueTasks) {
     Logger.log(`Sent Job:::${job.queueName} Task:${task}`);
     this.client.send(task, job).subscribe(
       (res) =>
