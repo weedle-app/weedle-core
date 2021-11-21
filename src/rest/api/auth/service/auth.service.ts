@@ -47,7 +47,9 @@ export class AuthService extends BaseService<AuthEntity> {
         email: signUpDto.email,
       });
       if (auth) {
-        throw ErrorException.USER_EXIST;
+        const errObj = ErrorException.USER_EXIST;
+        errObj.message = 'A user already exists with these details';
+        throw errObj;
       }
       const authObject: any = {
         ...signUpDto,
