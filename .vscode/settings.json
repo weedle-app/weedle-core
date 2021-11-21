@@ -1,7 +1,7 @@
 {
-    "cSpell.words": [
-        "nestjs",
-        "ormconfig",
-        "Weedle"
-    ]
+  "cSpell.words": ["nestjs", "ormconfig", "Weedle"],
+  "files.associations": {
+    "*.rsh": "javascript"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

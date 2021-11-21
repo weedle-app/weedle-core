@@ -33,16 +33,22 @@ export class ValidationPipe implements PipeTransform {
   }
 
   static formatErrors(errors: ValidationError[]) {
-    const formatted = {};
+    const formatted = {
+      errorMessages: [],
+      groupedErrors: {},
+    };
     const getNestedErrors = (error) => {
       if (error.children.length === 0) {
+        Object.values(error.constraints).forEach((error: any) => {
+          formatted.errorMessages.push(error);
+        });
         return error.constraints;
       } else {
         return this.formatErrors(error.children);
       }
     };
     errors.forEach((error) => {
-      formatted[error.property] = getNestedErrors(error);
+      formatted.groupedErrors[error.property] = getNestedErrors(error);
     });
     return formatted;
   }
