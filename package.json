@@ -22,7 +22,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "run-migration": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run --config src/config/ormconfig.ts",
-    "revert-migration": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert --config src/config/ormconfig.ts"
+    "revert-migration": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert --config src/config/ormconfig.ts",
+    "pg-start:dev":"docker-compose -f dev-docker-compose.yml up"
   },
   "dependencies": {
     "@google-cloud/storage": "^5.15.3",
