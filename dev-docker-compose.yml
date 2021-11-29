@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:11-alpine
+    container_name: weedle-postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - '5439:5439'
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'admin']
+      interval: '5s'
+      timeout: '5s'
+      retries: 5
+    command: -p 5439
