@@ -1,7 +1,8 @@
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotEnv from 'dotenv';
 dotEnv.config();
 
-const config = {
+const config: TypeOrmModuleOptions = {
   type: 'postgres',
   host: `${process.env.DB_HOST}`,
   port: Number(process.env.DB_PORT),
