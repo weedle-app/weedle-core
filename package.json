@@ -20,7 +20,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "run-migration": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run --config src/config/ormconfig.ts",
-    "revert-migration": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert --config src/config/ormconfig.ts"
+    "revert-migration": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert --config src/config/ormconfig.ts",
+    "pg-start:dev": "docker-compose -f dev-docker-compose.yml up",
+    "migrate:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -n"
   },
   "dependencies": {
     "@nestjs/common": "^7.5.5",
@@ -34,6 +36,7 @@
     "@sentry/node": "^6.13.3",
     "@sentry/tracing": "^6.13.3",
     "class-transformer": "^0.5.1",
+    "helmet": "^5.0.2",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
     "pg": "^8.7.1",

@@ -11,7 +11,7 @@ const config: TypeOrmModuleOptions = {
   database: `${process.env.DB_NAME}`,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: false,
-  migrationsRun: true,
+  migrationsRun: process.env.NODE_ENV === 'production' ? false : true,
   logging: true,
   migrations: ['src/migrations/**/*{.ts,.js}'],
   cli: {
