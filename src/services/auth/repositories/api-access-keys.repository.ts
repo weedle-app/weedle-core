@@ -37,4 +37,8 @@ export default class ApiAccessKeysRepository
   fetchApiKeyById(id: string): Promise<ApiAccessKeysEntity> {
     return this.findOne(id);
   }
+
+  fetchApiKeysByUserAuthId(authId: string): Promise<ApiAccessKeysEntity[]> {
+    return this.find({ authId });
+  }
 }
