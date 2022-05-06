@@ -7,6 +7,8 @@ import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
+import { AuthModule } from './services/auth/auth.module';
+import { UsersModule } from './services/users/users.module';
 import * as ormconfig from './config/ormconfig';
 
 @Module({
@@ -27,6 +29,8 @@ import * as ormconfig from './config/ormconfig';
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
