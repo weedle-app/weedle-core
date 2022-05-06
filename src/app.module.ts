@@ -9,14 +9,20 @@ import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
 import { AuthModule } from './services/auth/auth.module';
 import { UsersModule } from './services/users/users.module';
-import * as ormconfig from './config/ormconfig';
+import databaseConfig from './config/data-persistence/database.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [databaseConfig],
     }),
-    TypeOrmModule.forRoot(ormconfig),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return { ...configService.get('databaseConfig') };
+      },
+    }),
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({

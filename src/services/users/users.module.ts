@@ -4,6 +4,6 @@ import { UsersService } from './logic/users.service';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService]
+  providers: [UsersService],
 })
 export class UsersModule {}

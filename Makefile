@@ -1,0 +1,2 @@
+mg:
+	@ yarn migrate:generate
