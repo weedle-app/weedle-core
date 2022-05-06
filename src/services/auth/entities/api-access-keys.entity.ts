@@ -2,6 +2,11 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseAppEntity } from '../../../common/base-classes/base-entity';
 import { AuthEntity } from './auth.entity';
 
+export enum ApiKeyStatus {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
+
 @Entity({ name: 'api_access_keys' })
 export class ApiAccessKeysEntity extends BaseAppEntity {
   tableName = 'api_access_keys';
@@ -19,10 +24,11 @@ export class ApiAccessKeysEntity extends BaseAppEntity {
   public serverUrl: string;
 
   @Column({
-    type: 'varchar',
-    name: 'auth_id',
+    type: 'enum',
+    enum: ApiKeyStatus,
+    default: ApiKeyStatus.ACTIVE,
   })
-  public authId: string;
+  public status: ApiKeyStatus;
 
   @ManyToOne(() => AuthEntity, (auth) => auth.apiAccessKey, {
     onDelete: 'CASCADE',
