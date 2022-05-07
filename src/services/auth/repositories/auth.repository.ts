@@ -34,6 +34,11 @@ export default class AuthRepository
     return null;
   }
 
+  async verifyUserExists(email: string): Promise<boolean> {
+    const userExists = await this.findOne({ email });
+    return userExists != null;
+  }
+
   async createUserAuth(email: string, password: string): Promise<AuthEntity> {
     return this.save({
       email,

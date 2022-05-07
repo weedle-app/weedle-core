@@ -33,6 +33,13 @@ export class AuthService {
   }
 
   async registerUser(requestCtx: RegisterUserRequestType): Promise<AuthDTO> {
+    const userExists = await this.authRepository.verifyUserExists(
+      requestCtx.username,
+    );
+
+    if (userExists) {
+      throw new BadRequestException();
+    }
     const password = await bcrypt.hash(
       requestCtx.password,
       Number(process.env.HASH_SALT),
