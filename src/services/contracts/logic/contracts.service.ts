@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { NFTMintSignaturesDTO } from '../data-objects/data-signatures.dto';
 import { Wallet, utils } from 'ethers';
 import { plainToInstance } from 'class-transformer';
+import ApiAccessKeysRepository from '../../auth/repositories/api-access-keys.repository';
 
 @Injectable()
 export class ContractsService {
+  constructor(
+    private readonly apiAccessKeysRepository: ApiAccessKeysRepository,
+  ) {}
+
   private getMintingSignature = async (
     contractOwner: Wallet,
     typesToSign: string[],
@@ -18,13 +23,24 @@ export class ContractsService {
     return { hash, signature };
   };
 
-  async signNFTMintingTransaction({
-    contractAddress,
-    userWalletAddress,
-  }: {
-    userWalletAddress: string;
-    contractAddress: string;
-  }): Promise<NFTMintSignaturesDTO> {
+  async signNFTMintingTransaction(
+    {
+      contractAddress,
+      userWalletAddress,
+    }: {
+      userWalletAddress: string;
+      contractAddress: string;
+    },
+    apiKey: string,
+  ): Promise<NFTMintSignaturesDTO> {
+    if (!apiKey) {
+      throw new UnauthorizedException();
+    }
+
+    const apiKeyData = await this.apiAccessKeysRepository.fetchByApiKey(apiKey);
+    if (!apiKeyData) {
+      throw new UnauthorizedException();
+    }
     const contractOwner = new Wallet(process.env.NFT_ADMIN_PRIVATE_KEY);
     const { hash, signature } = await this.getMintingSignature(
       contractOwner,

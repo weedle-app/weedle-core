@@ -1,14 +1,15 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { Request, Controller, Post } from '@nestjs/common';
 import { ContractsService } from './logic/contracts.service';
 
 @Controller('contracts')
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post('nft/sign-mint-transaction')
-  async fetchApiKeyById(@Body() body) {
-    return this.contractsService.signNFTMintingTransaction(body);
+  async fetchApiKeyById(@Request() req) {
+    return this.contractsService.signNFTMintingTransaction(
+      req.body,
+      req.headers.apikey,
+    );
   }
 }
