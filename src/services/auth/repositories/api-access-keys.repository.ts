@@ -29,7 +29,6 @@ export default class ApiAccessKeysRepository
     const apiAccessKey = new ApiAccessKeysEntity();
     apiAccessKey.apiKey = apiKey;
     apiAccessKey.serverUrl = serverUrl;
-    apiAccessKey.authId = auth.id;
 
     return this.save(apiAccessKey);
   }
@@ -38,7 +37,11 @@ export default class ApiAccessKeysRepository
     return this.findOne(id);
   }
 
-  fetchApiKeysByUserAuthId(authId: string): Promise<ApiAccessKeysEntity[]> {
-    return this.find({ authId });
+  fetchByApiKey(apiKey: string): Promise<ApiAccessKeysEntity> {
+    return this.findOne({ apiKey });
+  }
+
+  fetchApiKeysByUserAuthId(auth: AuthEntity): Promise<ApiAccessKeysEntity[]> {
+    return this.find({ relations: ['auth'], where: { auth } });
   }
 }

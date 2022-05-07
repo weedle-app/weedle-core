@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 
-export abstract class BaseSerializer {
+export abstract class BaseDTO {
   id?: string;
 
   @Exclude()

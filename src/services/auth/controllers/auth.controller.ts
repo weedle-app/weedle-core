@@ -34,10 +34,4 @@ export class AuthController {
   async fetchApiKeyById(@Param() params) {
     return this.apiAccessKeysService.getApiKeyById(params.id);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('api/keys/:userId')
-  async fetchApiKeysForUser(@Param() params) {
-    return this.apiAccessKeysService.getApiKeysListByUserId(params.userId);
-  }
 }
