@@ -4,11 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SentryModule } from '@ntegral/nestjs-sentry';
 import { LogLevel } from '@sentry/types';
 import { Connection } from 'typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigFields } from './config-types';
 import { AuthModule } from './services/auth/auth.module';
 import { UsersModule } from './services/users/users.module';
+import { ContractsModule } from './services/contracts/contracts.module';
 import databaseConfig from './config/data-persistence/database.config';
 
 @Module({
@@ -37,6 +39,7 @@ import databaseConfig from './config/data-persistence/database.config';
     }),
     AuthModule,
     UsersModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
