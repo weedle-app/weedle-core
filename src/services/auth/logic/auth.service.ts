@@ -8,7 +8,6 @@ import { RegisterUserRequestType } from '../controllers/auth-types';
 import ApiAccessKeysRepository from '../repositories/api-access-keys.repository';
 import AuthRepository from '../repositories/auth.repository';
 import { AuthEntity } from '../entities/auth.entity';
-import { plainToInstance } from 'class-transformer';
 import { AuthDTO } from '../data-objects/auth.dto';
 
 @Injectable()
