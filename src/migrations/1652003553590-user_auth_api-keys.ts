@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class usersAuthApiAccess1651861785362 implements MigrationInterface {
-    name = 'usersAuthApiAccess1651861785362'
+export class userAuthApiKeys1652003553590 implements MigrationInterface {
+    name = 'userAuthApiKeys1652003553590'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "active" boolean NOT NULL DEFAULT true, "deleted" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP NOT NULL DEFAULT ('now'::text)::timestamp(6) with time zone, "updated_at" TIMESTAMP NOT NULL DEFAULT ('now'::text)::timestamp(6) with time zone, "email" character varying NOT NULL, "profile_type" character varying NOT NULL DEFAULT 'customer', "auth_id" uuid NOT NULL, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "UQ_32ddc1ae708e8261a870a6eb3e6" UNIQUE ("auth_id"), CONSTRAINT "REL_32ddc1ae708e8261a870a6eb3e" UNIQUE ("auth_id"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);

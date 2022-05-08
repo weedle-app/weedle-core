@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { v5 as uuidv5 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -51,8 +51,8 @@ export class AuthService {
     );
 
     if (auth) {
-      const [apiKey, serverUrl] = [uuidv4(), 'https://someServerurl.com'];
-      await this.apiAccessKeysRepository.createApiKeys(apiKey, serverUrl, auth);
+      const [apiKey, apiSecret] = [uuidv5(), `sc-${uuidv5()}`];
+      await this.apiAccessKeysRepository.createApiKeys(apiKey, apiSecret, auth);
 
       return this.authRepository.transformEntity<AuthDTO>(auth, AuthDTO);
     }

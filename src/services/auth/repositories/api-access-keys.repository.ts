@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { EntityRepository } from 'typeorm';
 import BaseRepository from '../../../common/base-classes/base-repository';
 import { ApiAccessKeysEntity } from '../entities/api-access-keys.entity';
@@ -6,7 +7,7 @@ import { AuthEntity } from '../entities/auth.entity';
 export interface IApiKeyAccessRepository {
   createApiKeys(
     apiKey: string,
-    serverUrl: string,
+    apiSecret: string,
     auth: AuthEntity,
   ): Promise<ApiAccessKeysEntity>;
   fetchApiKeyById(id: string): Promise<ApiAccessKeysEntity>;
@@ -19,16 +20,16 @@ export default class ApiAccessKeysRepository
 {
   async createApiKeys(
     apiKey: string,
-    serverUrl: string,
+    apiSecret: string,
     auth: AuthEntity,
   ): Promise<ApiAccessKeysEntity> {
-    const apiKeyExists = await this.findOne({ apiKey, serverUrl });
+    const apiKeyExists = await this.findOne({ apiKey, apiSecret });
     if (apiKeyExists) {
-      // regenerate key
+      throw new InternalServerErrorException();
     }
     const apiAccessKey = new ApiAccessKeysEntity();
     apiAccessKey.apiKey = apiKey;
-    apiAccessKey.serverUrl = serverUrl;
+    apiAccessKey.apiSecret = apiSecret;
 
     return this.save(apiAccessKey);
   }

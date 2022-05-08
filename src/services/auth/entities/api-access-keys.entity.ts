@@ -21,7 +21,7 @@ export class ApiAccessKeysEntity extends BaseAppEntity {
     type: 'varchar',
     name: 'server_url',
   })
-  public serverUrl: string;
+  public apiSecret: string;
 
   @Column({
     type: 'enum',
